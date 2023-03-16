@@ -27,12 +27,17 @@ process.on("uncaughtException", (err)=>{
     
     //get all products
     exports.getAllProducts = catchAysncErrors (async(req, res) => {
-        const apiFeature = new ApiFeatures(product.find(), req.query).search();
-
-        const products = await Product.find();
+        const resultperPage = 5;
+        const productCount = await Product.countDocuments();
+        const apiFeature = new ApiFeatures(Product.find(),req.query)
+        .search().
+        filter()
+        .pagination(resultperPage);
+        const products = await apiFeature.query;
         res.status(200).json({
             success:true,
-            products
+            products,
+            productCount,
         })
     })
 
